@@ -7,27 +7,63 @@ import {
   Tabs,
   Tab,
   Button,
+  Menu,
+  MenuItem,
 } from "@material-ui/core";
 import logo from "../assets/logo.svg";
 import { Link } from "react-router-dom";
+import useTabIndex from "../utils/useTabIndex";
 
 function Header() {
   const styles = useStyles();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedTabIndex, setSelectedTabIndex] = useTabIndex();
 
-  const tabSwitchHandler = (ev, idx) => setSelectedIndex(idx);
+  const [selectedMenuItem, setSelectedMenuItem] = useState(0);
 
+  const tabSwitchHandler = (ev, idx) => setSelectedTabIndex(idx);
+
+  const handleClick = (ev) => {
+    setAnchorEl(ev.currentTarget);
+    setIsOpen(true);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setIsOpen(false);
+  };
+
+  const handleCloseMenuItem = (ev, idx) => {
+    setSelectedTabIndex(1);
+    setSelectedMenuItem(idx);
+    handleClose();
+  };
+  const menuItems = [
+    { name: "Services", route: "/services" },
+    { name: "Mobile App", route: "/mobile-app" },
+    { name: "Website", route: "/website" },
+    { name: "Custom Software", route: "/custom-software" },
+  ];
   return (
     <>
       <ElevationScroll>
         <AppBar position="fixed">
           <Toolbar disableGutters>
-            <img src={logo} className={styles.logo} alt="company logo" />
+            <Button
+              className={styles.logoContainer}
+              component={Link}
+              to="/"
+              disableRipple
+              onClick={() => setSelectedTabIndex(0)}
+            >
+              <img src={logo} className={styles.logo} alt="company logo" />
+            </Button>
             <Tabs
               indicatorColor="primary"
               onChange={tabSwitchHandler}
-              value={selectedIndex}
+              value={selectedTabIndex}
               className={styles.tabContainer}
             >
               <Tab
@@ -37,7 +73,10 @@ function Header() {
                 label="Home"
               />
               <Tab
+                aria-owns={anchorEl ? "simple-menu" : undefined}
+                aria-haspopup={anchorEl ? true : undefined}
                 component={Link}
+                onMouseOver={(ev) => handleClick(ev)}
                 to="/services"
                 className={styles.itemTab}
                 label="Services"
@@ -69,6 +108,31 @@ function Header() {
               >
                 Free Estimate
               </Button>
+
+              <Menu
+                id="simple-menu"
+                anchorEl={anchorEl}
+                elevation={0}
+                keepMounted
+                open={isOpen}
+                onClose={handleClose}
+                MenuListProps={{ onMouseLeave: handleClose }}
+                classes={{ paper: styles.menu }}
+              >
+                {menuItems.map((menu, idx) => (
+                  <MenuItem
+                    component={Link}
+                    to={menu.route}
+                    selected={
+                      selectedMenuItem === idx && selectedTabIndex === 1
+                    }
+                    classes={{ root: styles.menuItem }}
+                    onClick={(ev) => handleCloseMenuItem(ev, idx)}
+                  >
+                    {menu.name}
+                  </MenuItem>
+                ))}
+              </Menu>
             </Tabs>
           </Toolbar>
         </AppBar>
@@ -79,8 +143,8 @@ function Header() {
 }
 
 const useStyles = makeStyles((theme) => ({
-  toolbarMargin: { ...theme.mixins.toolbar, marginBottom: "3em" },
-  logo: { height: "7em" },
+  toolbarMargin: { ...theme.mixins.toolbar, marginBottom: "1em" },
+  logo: { height: "8em" },
   tabContainer: { marginLeft: "auto", marginRight: 24 },
   itemTab: {
     ...theme.typography.tab,
@@ -95,6 +159,20 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "1rem",
     textTransform: "none",
     height: 40,
+  },
+  logoContainer: {
+    padding: 0,
+    "&:hover": { backgroundColor: "transparent" },
+  },
+  menu: {
+    backgroundColor: theme.palette.common.blue,
+    color: "white",
+    borderRadius: 0,
+  },
+  menuItem: {
+    ...theme.typography.tab,
+    opacity: 0.7,
+    "&:hover": { opacity: 1 },
   },
 }));
 

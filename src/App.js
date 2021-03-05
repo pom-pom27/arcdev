@@ -20,7 +20,7 @@ function App() {
           <Route exact path="/contact" component={() => <div>contact</div>} />
           <Route
             exact
-            path="/mobile-project"
+            path="/mobile-app"
             component={() => <div>mobile-project</div>}
           />
           <Route
@@ -28,7 +28,7 @@ function App() {
             path="/custom-software"
             component={() => <div>software</div>}
           />
-          <Route exact path="/websites" component={() => <div>websites</div>} />
+          <Route exact path="/website" component={() => <div>websites</div>} />
           <Route exact path="/estimate" component={() => <div>estimate</div>} />
         </Switch>
       </Router>

@@ -4,7 +4,11 @@ const blue = "#0072B9";
 const orange = "#FFBA60";
 
 export const theme = createMuiTheme({
-  palette: { primary: { main: blue }, secondary: { main: orange } },
+  palette: {
+    primary: { main: blue },
+    secondary: { main: orange },
+    common: { blue: blue, orange: orange },
+  },
   typography: {
     fontSize: 10,
     tab: {
